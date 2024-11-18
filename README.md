@@ -39,9 +39,9 @@ This ROS package, `assignment1_rt`, implements a solution that involves controll
 ### Build the Package
 1. Clone the repository into your ROS workspace
   ```
-  cd ~/catkin_ws/src
-  git clone [repository URL]
-  cd ~/catkin_ws
+  cd ~/ros1/src
+  git clone https://github.com/yuimomi/assignment1_rt.git
+  cd ~/ros1
   catkin_make
  ```
 
