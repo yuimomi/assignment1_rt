@@ -37,14 +37,14 @@ This ROS package, `assignment1_rt`, implements a solution that involves controll
 
 ### Build the Package
 1. Clone the repository into your ROS workspace
-```bash
-cd ~/catkin_ws/src
-git clone [repository URL]
-cd ~/catkin_ws
-catkin_make
+  ```bash
+  cd ~/catkin_ws/src
+  git clone [repository URL]
+  cd ~/catkin_ws
+  catkin_make
 
 2. Source your workspace
-```bash
-source devel/setup.bash
+  ```bash
+  source devel/setup.bash
 
 ### How to Run
