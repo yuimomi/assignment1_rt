@@ -24,7 +24,7 @@ int main(int argc, char **argv){
     // Generate turtle2
     ros::ServiceClient spawn_client = nh.serviceClient<turtlesim::Spawn>("/spawn");
     turtlesim::Spawn spawn_srv;
-    spawn_spawn_srv.request.x = 5.0;
+    spawn_srv.request.x = 5.0;
 	spawn_srv.request.y = 5.0;
  	spawn_srv.request.theta = 0.0;
     spawn_srv.request.name = "turtle2";
@@ -39,20 +39,20 @@ int main(int argc, char **argv){
 
     while(ros::ok()){
         std::cout << "Select turtle (turtle1/turtle2): ";
-        std::cin >> "selected_turtle";
+        std::cin >> selected_turtle;
 
         std::cout << "Enter linear velosity: ";
-        std::in >> linear;
+        std::cin >> linear;
 
-        std::cont << "Enter angular velosity: ";
-        std::in >> angular;
+        std::cout << "Enter angular velosity: ";
+        std::cin >> angular;
 
         // Send command for 1.0 sec
         sendCommnad(selected_turtle, linear, angular);
         ros::Duration(1.0).sleep();
 
         // Stop turtle
-        sendCommnad(selected_turtle, 0, 0)
+        sendCommnad(selected_turtle, 0, 0);
     }
     return 0;
 
