@@ -8,21 +8,21 @@ This ROS package, `assignment1_rt`, implements a solution that involves controll
 ## Features
 
 ### UI Node (node1)
-- **Spawn New Turtle (`turtle2`)**:
+- **Spawn New Turtle (`turtle2`)**
   - Automatically spawns a second turtle in the Turtlesim environment.
-- **Interactive Command Interface**:
+- **Interactive Command Interface**
   - Provides a text-based interface for the user to:
     - Choose which turtle to control (`turtle1` or `turtle2`).
     - Input velocity commands for the selected turtle.
-- **Timed Command Execution**:
+- **Timed Command Execution**
   - Velocity commands are executed for 1 second, after which the turtle stops. The user can then input new commands.
 
 ### Distance Node (node2)
-- **Distance Monitoring**:
+- **Distance Monitoring**
   - Computes and publishes the distance between `turtle1` and `turtle2` on a dedicated topic.
-- **Proximity Control**:
+- **Proximity Control**
   - Stops a turtle if it gets too close to the other turtle (user-defined threshold).
-- **Boundary Enforcement**:
+- **Boundary Enforcement**
   - Stops a turtle if it moves out of the defined area:
     - `x` or `y` > 10.0
     - `x` or `y` < 1.0
@@ -31,7 +31,7 @@ This ROS package, `assignment1_rt`, implements a solution that involves controll
 
 ### Prerequisites
 - ROS Noetic (recommended)
-- Turtlesim package:
+- Turtlesim package
   ```
   sudo apt install ros-noetic-turtlesim
   ```
