@@ -34,3 +34,17 @@ This ROS package, `assignment1_rt`, implements a solution that involves controll
 - Turtlesim package:
   ```bash
   sudo apt install ros-noetic-turtlesim
+
+### Build the Package
+1. Clone the repository into your ROS workspace
+```bash
+cd ~/catkin_ws/src
+git clone [repository URL]
+cd ~/catkin_ws
+catkin_make
+
+2. Source your workspace
+```bash
+source devel/setup.bash
+
+### How to Run
