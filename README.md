@@ -32,19 +32,69 @@ This ROS package, `assignment1_rt`, implements a solution that involves controll
 ### Prerequisites
 - ROS Noetic (recommended)
 - Turtlesim package:
-  ```bash
+  ```
   sudo apt install ros-noetic-turtlesim
+  ```
 
 ### Build the Package
 1. Clone the repository into your ROS workspace
-  ```bash
+  ```
   cd ~/catkin_ws/src
   git clone [repository URL]
   cd ~/catkin_ws
   catkin_make
+ ```
 
 2. Source your workspace
-  ```bash
+  ```
   source devel/setup.bash
+```
 
 ### How to Run
+1. Launch Turtlesim
+  ```
+  rosrun turtlesim turtlesim_node
+  ```
+2. Start the Nodes
+  - Launch the UI Node (node1)
+  ```
+  rosrun assignment1_rt UI
+  ```
+  
+  - Launch the Distance Node (node2)
+  ```
+  rosrun assignment1_rt Distance
+  ```
+
+3. Interact with the Interface
+   - Use the terminal interface to select a turtle and input velocity commands.
+
+### Topics and Services
+#### Topics
+- `/turtle1/pose`: Provides the position and orientation of `turtle1`.
+- `/turtle2/pose`: Provides the position and orientation of `turtle2`.
+- `/cmd_vel`: Accepts velocity commands for the turtles.
+- `/distance_topic`: Publishes the relative distance between `turtle1` and `turtle2`.
+
+#### Services
+- `/spawn`: Spawns a new turtle.
+- `/kill`: Removes a turtle.
+
+### Code Structure
+```
+assignment1_rt/
+├── CMakeLists.txt
+├── package.xml
+├── src/
+│   ├── UI.cpp            # Implements the UI node
+│   ├── Distance.cpp      # Implements the distance monitoring node
+└── README.md
+```
+
+### Evaluation
+- Code must be pushed to a GitHub repository with a clear commit history.
+- README must clearly explain the code, its functionality, and how to run it.
+- Bonus points for using both C++ and Python in your implementation.
+
+
+
