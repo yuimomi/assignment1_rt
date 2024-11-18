@@ -13,7 +13,7 @@ This ROS package, `assignment1_rt`, implements a solution that involves controll
 - **Interactive Command Interface**
   - Provides a text-based interface for the user to:
     - Choose which turtle to control (`turtle1` or `turtle2`).
-    - Input velocity commands for the selected turtle.
+    - Input velocity commands (linear and angular) for the selected turtle.
 - **Timed Command Execution**
   - Velocity commands are executed for 1 second, after which the turtle stops. The user can then input new commands.
 
