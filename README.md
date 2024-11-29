@@ -22,6 +22,7 @@ This ROS package, `assignment1_rt`, implements a solution that involves controll
   - Computes and publishes the distance between `turtle1` and `turtle2` on a dedicated topic.
 - **Proximity Control**
   - Stops a turtle if it gets too close to the other turtle (user-defined threshold).
+    - Threshold = 2.0 (by default)
 - **Boundary Enforcement**
   - Stops a turtle if it moves out of the defined area:
     - `x` or `y` > 10.0
