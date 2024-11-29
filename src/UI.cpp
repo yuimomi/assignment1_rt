@@ -6,30 +6,47 @@
 
 ros::Publisher pub_turtle1, pub_turtle2;
 
-void sendCommnad(const std::string &turtle_name, float linear, float angular){
+void spawnTurtle(const std::string &name, float x, float y, float theta) {
+    ros::NodeHandle nh;
+    ros::ServiceClient client = nh.serviceClient<turtlesim::Spawn>("/spawn");
+
+    turtlesim::Spawn srv;
+    srv.request.x = x;
+    srv.request.y = y;
+    srv.request.theta = theta;
+    srv.request.name = name;
+
+    if (client.call(srv)) {
+        ROS_INFO("Spawned turtle '%s' at (%f, %f, %f)", name.c_str(), x, y, theta);
+    } else {
+        ROS_ERROR("Failed to call service /spawn");
+        ros::shutdown();
+    }
+}
+
+void sendCommand(ros::Publisher &pub, float linear, float angular) {
     geometry_msgs::Twist cmd;
     cmd.linear.x = linear;
     cmd.angular.z = angular;
-    if(turtle_name == "turtle1"){
-        pub_turtle1.publish(cmd);
-    } else if(turtle_name == "turtle2"){
-        pub_turtle2.publish(cmd);
-    }
+
+    pub.publish(cmd);
+    ROS_INFO("Command sent: linear=%f, angular=%f", linear, angular);
+
+    ros::Duration(1.0).sleep(); // Send the command for 1 second
+
+    cmd.linear.x = 0.0;
+    cmd.angular.z = 0.0;
+    pub.publish(cmd);
+    ROS_INFO("Turtle stopped.");
 }
 
 int main(int argc, char **argv){
     ros::init(argc, argv, "ui_node");
     ros::NodeHandle nh;
 
-    // Generate turtle2
-    ros::ServiceClient spawn_client = nh.serviceClient<turtlesim::Spawn>("/spawn");
-    turtlesim::Spawn spawn_srv;
-    spawn_srv.request.x = 5.0;
-	spawn_srv.request.y = 5.0;
- 	spawn_srv.request.theta = 0.0;
-    spawn_srv.request.name = "turtle2";
- 	// spawn_client.waitForExistence();
-	spawn_client.call(spawn_srv);
+
+    // Spawn a second turtle
+    spawnTurtle("turtle2", 3.0, 3.0, 0.0);
 
 	pub_turtle1 = nh.advertise<geometry_msgs::Twist> ("turtle1/cmd_vel", 10); 
 	pub_turtle2 = nh.advertise<geometry_msgs::Twist> ("turtle2/cmd_vel", 10); 
@@ -47,12 +64,11 @@ int main(int argc, char **argv){
         std::cout << "Enter angular velosity: ";
         std::cin >> angular;
 
-        // Send command for 1.0 sec
-        sendCommnad(selected_turtle, linear, angular);
-        ros::Duration(1.0).sleep();
-
-        // Stop turtle
-        sendCommnad(selected_turtle, 0, 0);
+        if (selected_turtle == "turtle1") {
+            sendCommand(pub_turtle1, linear, angular);
+        } else if (selected_turtle == "turtle2") {
+            sendCommand(pub_turtle2, linear, angular);
+        }
     }
     return 0;
 
