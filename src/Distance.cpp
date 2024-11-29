@@ -11,9 +11,9 @@ ros::Publisher pub_turtle1, pub_turtle2;
 turtlesim::Pose turtle1_pose;
 turtlesim::Pose turtle2_pose;
 
-const float THRESHOLD = 2.0;  // Minimum Distance Threshold
-const float BOUND_MIN = 1.0;        // Boundary minimum
-const float BOUND_MAX = 10.0;       // Boundary maximum
+const float THRESHOLD = 2.0;        // distance threshold
+const float BOUND_MIN = 1.0;        // minimum bounsary
+const float BOUND_MAX = 10.0;       // maximum boundary
 
 void poseCallback1(const turtlesim::Pose::ConstPtr &msg){
      turtle1_pose = *msg;
@@ -24,17 +24,18 @@ void poseCallback2(const turtlesim::Pose::ConstPtr &msg){
 }
 
 // A function to calculate distance between turtle1 and turtle2
-float calculateDistance(const turtlesim::Pose &pose1, const turtlesim::Pose &pose2) {
+float checkDistance(const turtlesim::Pose &pose1, const turtlesim::Pose &pose2) {
     float dx = pose1.x - pose2.x;
     float dy = pose1.y - pose2.y;
     return std::sqrt(dx * dx + dy * dy);
 }
 
-// A function to determine whether or not the object is within the boundary
+// A function to determine whether or not the turtle is within the boundary
 bool isWithinBoundary(const turtlesim::Pose &pose) {
     return pose.x < BOUND_MIN || pose.x > BOUND_MAX || pose.y < BOUND_MIN || pose.y > BOUND_MAX;
 }
 
+// A function to stop turtle
 void stopTurtle(ros::Publisher &pub) {
     geometry_msgs::Twist stop_cmd;
     stop_cmd.linear.x = 0.0;
@@ -57,7 +58,7 @@ int main(int argc, char **argv){
     while(ros::ok()){
         ros::spinOnce();
 
-        float distance = calculateDistance(turtle1_pose, turtle2_pose);
+        float distance = checkDistance(turtle1_pose, turtle2_pose);
         ROS_INFO("Distance between turtles: %.2f", distance);
 
         // Publish distance
@@ -70,16 +71,16 @@ int main(int argc, char **argv){
             stopTurtle(pub_turtle1);
             stopTurtle(pub_turtle2);
         }
+
+        // If the turtle exceeds the boundary, stop it
         if (isWithinBoundary(turtle1_pose)) {
                 ROS_WARN("Turtle1 is near the boundary! Stopping turtle1.");
                 stopTurtle(pub_turtle1);
             }
-
         if (isWithinBoundary(turtle2_pose)) {
                 ROS_WARN("Turtle2 is near the boundary! Stopping turtle2.");
                 stopTurtle(pub_turtle2);
-            }
-        
+            }        
     rate.sleep();
     }
 return 0;
