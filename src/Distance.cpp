@@ -7,17 +7,39 @@
 ros::Publisher dist_pub;
 ros::Publisher pub_turtle1, pub_turtle2;
 
-double x_1,y_1,x_2,y_2;
+// Global Variables
+turtlesim::Pose turtle1_pose;
+turtlesim::Pose turtle2_pose;
 
+const float THRESHOLD = 2.0;  // Minimum Distance Threshold
+const float BOUND_MIN = 1.0;        // Boundary minimum
+const float BOUND_MAX = 10.0;       // Boundary maximum
 
 void poseCallback1(const turtlesim::Pose::ConstPtr &msg){
-    x_1 = msg ->x;
-    y_1 = msg ->y;
+     turtle1_pose = *msg;
 }
 
 void poseCallback2(const turtlesim::Pose::ConstPtr &msg){
-    x_2 = msg ->x;
-    y_2 = msg ->y;
+    turtle2_pose = *msg;
+}
+
+// A function to calculate distance between turtle1 and turtle2
+float calculateDistance(const turtlesim::Pose &pose1, const turtlesim::Pose &pose2) {
+    float dx = pose1.x - pose2.x;
+    float dy = pose1.y - pose2.y;
+    return std::sqrt(dx * dx + dy * dy);
+}
+
+// A function to determine whether or not the object is within the boundary
+bool isWithinBoundary(const turtlesim::Pose &pose) {
+    return pose.x < BOUND_MIN || pose.x > BOUND_MAX || pose.y < BOUND_MIN || pose.y > BOUND_MAX;
+}
+
+void stopTurtle(ros::Publisher &pub) {
+    geometry_msgs::Twist stop_cmd;
+    stop_cmd.linear.x = 0.0;
+    stop_cmd.angular.z = 0.0;
+    pub.publish(stop_cmd);
 }
 
 int main(int argc, char **argv){
@@ -34,7 +56,9 @@ int main(int argc, char **argv){
     ros::Rate rate(10);
     while(ros::ok()){
         ros::spinOnce();
-        double distance = std::sqrt(std::pow(x_2 - x_1, 2) + std::pow(y_2 - y_1, 2));
+
+        float distance = calculateDistance(turtle1_pose, turtle2_pose);
+        ROS_INFO("Distance between turtles: %.2f", distance);
 
         // Publish distance
         std_msgs::Float32 dist_msg;
@@ -42,22 +66,20 @@ int main(int argc, char **argv){
         dist_pub.publish(dist_msg);
 
         // If the distance exceeds the threshold, stop the turtle
-        if (distance < 1.0){
-            geometry_msgs::Twist stop_cmd;
-            stop_cmd.linear.x = 0;
-            stop_cmd.angular.z = 0;
-            pub_turtle1.publish(stop_cmd);
-            pub_turtle2.publish(stop_cmd);
+        if (distance < THRESHOLD){
+            stopTurtle(pub_turtle1);
+            stopTurtle(pub_turtle2);
         }
-        // If the turtle crosses the boundary, stop it
-        if (x_1 < 1.0 || x_1 > 10.0 || y_1 < 1.0 || y_1 > 10.0 || 
-            x_2 < 1.0 || x_2 > 10.0 || y_2 < 1.0 || y_2 > 10.0) {
-            geometry_msgs::Twist stop_cmd;
-            stop_cmd.linear.x = 0;
-            stop_cmd.angular.z = 0;
-            pub_turtle1.publish(stop_cmd);
-            pub_turtle2.publish(stop_cmd);
-        }
+        if (isWithinBoundary(turtle1_pose)) {
+                ROS_WARN("Turtle1 is near the boundary! Stopping turtle1.");
+                stopTurtle(pub_turtle1);
+            }
+
+        if (isWithinBoundary(turtle2_pose)) {
+                ROS_WARN("Turtle2 is near the boundary! Stopping turtle2.");
+                stopTurtle(pub_turtle2);
+            }
+        
     rate.sleep();
     }
 return 0;
